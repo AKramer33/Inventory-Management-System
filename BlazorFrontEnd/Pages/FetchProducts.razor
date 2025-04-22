@@ -24,16 +24,38 @@
         using var httpClient = new HttpClient();
         try
         {
-            var response = await httpClient.GetFromJsonAsync<Product[]>("https://localhost:5001/api/products");
+            var response = await httpClient.GetFromJsonAsync<ProductDto[]>("https://localhost:5001/api/productlist");
             if (response != null)
             {
-            products = response;
+                products = response.Select(dto => new Product
+                {
+                    Id = dto.Id,
+                    Name = dto.Name,
+                    Price = dto.Price,
+                    Stock = dto.Stock
+                }).ToArray();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching products: {ex.Message}");
         }
+    }
+
+    private class ProductDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public double Price { get; set; }
+        public int Stock { get; set; }
+        public CategoryDto Category { get; set; }
+    }
+
+    private class CategoryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
     }
 
     public class Product
